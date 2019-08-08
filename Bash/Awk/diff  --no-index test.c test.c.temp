@@ -1,0 +1,13 @@
+diff --git a/test.c b/test.c.temp
+index 2e81e414ab2e..89be89a56c8b 100644
+--- a/test.c
++++ b/test.c.temp
+@@ -1,6 +1,6 @@
+ trace_printf(" sdfsdsdfsdf  sdfs fs s");
+ void My_test_funciton(void* p, int q,char arr)
+ {
+-trace_printf("123 123123 213123 2354234 345345 345345");
+-  TRACE_INFO(ABCDE_2343, "sadfs  sdf23423 4356345 7654sdf sdfs %d %d %d \n",sdf,sdfs, 2543);
++TRACE_INFO(MY_TEST_FUNCITON_1, "123 123123 213123 2354234 345345 345345");
++  TRACE_INFO(MY_TEST_FUNCITON_2, "sadfs  sdf23423 4356345 7654sdf sdfs %d %d %d \n",sdf,sdfs, 2543);
+ }
