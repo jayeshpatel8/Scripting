@@ -1,0 +1,17 @@
+----------------------------------------------------------
+
+  -----     Replaced: -- @Line:4 with TRACE_INFO   ------ 
+
+----------------------------------------------------------
+ trace_printf("123 123123 213123 2354234 345345 345345"); 
+ TRACE_INFO(MY_TEST_FUNCITON_1, "123 123123 213123 2354234
+
+----------------------------------------------------------
+
+  -----     Replaced: -- @Line:5 with TRACE_INFO   ------ 
+
+----------------------------------------------------------
+   TRACE_INFO(ABCDE_2343, "sadfs  sdf23423 4356345 7654sdf
+   TRACE_INFO(MY_TEST_FUNCITON_2, "sadfs  sdf23423 4356345
+   
+ TotalReplaced=2, TotalSkipped=0 NoOfTracePrintInLastFun=2
