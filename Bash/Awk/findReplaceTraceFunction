@@ -1,0 +1,421 @@
+#!/bin/sh
+#
+# Usage ./scriptname file_name
+#
+# Replace the matched string specified by ($search_str1) with $(replace_str1) and also add msg_id = $("functionname_" + NoOfTracePrintFoundInFunction till now + ", ") as a first parameter
+# output file : file_name.temp cotains replaced texts and log.txt contains logging info.
+#
+# example: ./findReplaceTraceFunction test.c
+#
+# Input file: test.c
+#
+# cat test.c
+#trace_printf(" sdfsdsdfsdf  sdfs fs s");
+#void My_test_funciton(void* p, int q,char arr)
+#{
+#trace_printf("123 123123 213123 2354234 345345 345345");
+#  TRACE_INFO(ABCDE_2343, "sadfs  sdf23423 4356345 7654sdf sdfs %d %d %d \n",sdf,sdfs, 2543);
+#}
+#
+# Output file: test.c.temp
+#
+#$cat test.c.temp
+#trace_printf(" sdfsdsdfsdf  sdfs fs s");
+#void My_test_funciton(void* p, int q,char arr)
+#{
+#TRACE_INFO(MY_TEST_FUNCITON_1, "123 123123 213123 2354234 345345 345345");
+#  TRACE_INFO(MY_TEST_FUNCITON_2, "sadfs  sdf23423 4356345 7654sdf sdfs %d %d %d \n",sdf,sdfs, 2543);
+#}
+#
+# diff of both input and output files
+#
+#diff --git a/test.c b/test.c.temp
+#index 2e81e414ab2e..89be89a56c8b 100644
+#--- a/test.c
+#+++ b/test.c.temp
+#@@ -1,6 +1,6 @@
+# trace_printf(" sdfsdsdfsdf  sdfs fs s");
+# void My_test_funciton(void* p, int q,char arr)
+# {
+#-trace_printf("123 123123 213123 2354234 345345 345345");
+#-  TRACE_INFO(ABCDE_2343, "sadfs  sdf23423 4356345 7654sdf sdfs %d %d %d \n",sdf,sdfs, 2543);
+#+TRACE_INFO(MY_TEST_FUNCITON_1, "123 123123 213123 2354234 345345 345345");
+#+  TRACE_INFO(MY_TEST_FUNCITON_2, "sadfs  sdf23423 4356345 7654sdf sdfs %d %d %d \n",sdf,sdfs, 2543);
+# }
+#
+#
+#$cat log.txt
+#
+#----------------------------------------------------------------------------------------------
+#
+#  -----     Replaced: -- @Line:4 with TRACE_INFO   ------
+#
+#----------------------------------------------------------------------------------------------
+# trace_printf("123 123123 213123 2354234 345345 345345");
+# TRACE_INFO(MY_TEST_FUNCITON_1, "123 123123 213123 2354234 345345 345345");
+#
+#----------------------------------------------------------------------------------------------
+#
+#  -----     Replaced: -- @Line:5 with TRACE_INFO   ------
+#
+#----------------------------------------------------------------------------------------------
+#   TRACE_INFO(ABCDE_2343, "sadfs  sdf23423 4356345 7654sdf sdfs %d %d %d \n",sdf,sdfs, 2543);
+#   TRACE_INFO(MY_TEST_FUNCITON_2, "sadfs  sdf23423 4356345 7654sdf sdfs %d %d %d \n",sdf,sdfs, 2543);
+#
+# TotalReplaced=2, TotalSkipped=0 NoOfTracePrintInLastFun=2
+
+cat $1 |nawk '
+BEGIN { search_str1="trace_printf"; replace_str1="TRACE_INFO";state = 0; last = ""; prev="";fn_start=0;fn_name="";extra_brace=0;pre_element="";fn_name_found=0;}
+ ParseLineToFindTraceInsideFunc(result,$0,NR,prev,fn_start,fn_name,fn_name_list,NoOfTracePrintInFun,selected_fn_name,TotalReplaced,TotalSkipped);
+NR > 1 {prev = $0}
+
+#    fn_start=result[1];
+#    fn_name=result[2];
+#    NoOfTracePrintInFun=result[3];
+#    selected_fn_name=result[4];
+#    fn_name_list_cnt=result[5];
+#    TotalReplaced=result[6];
+#    TotalSkipped=result[7]}
+#    result[8]=replaced_line;
+{if (replaced < result[6]){print result[8] ;replaced++;}else {print $0  }}
+
+#Function Prints log info. to ==> log.txt file
+function printf_log(a,b,c,d,e,f,g,h,i,j,k)
+{
+    printf( a,b,c,d,e,f,g,h,i,j,k) > "log.txt"
+}
+
+#Helper function for printing logging information
+function printFuncMsg (msg_str,fn_name,LineNum,Line,print_to_file_only)
+{
+        printf_log("\n-############################################################################");
+        printf_log("\n-###################     %s %s", msg_str," ###################");
+        printf_log("\n Function: --   %s %s %d %s %s ",  fn_name,"()  --  ", LineNum,"  --  " ,Line);
+        printf_log("\n-############################################################################\n");
+}
+
+#Get the current funcition name from list of function founded
+function GetCurrentFuncName(fn_name_list,LineNum){
+    multiple_fn_found=0
+    fn_name_sel_index=0
+    for (id in fn_name_list){
+        if (length(fn_name_list[id])>10){
+            #printf_log("\n"+"("+str(id)+") "+fn)
+            fn_name_sel_index=id
+            multiple_fn_found+=1
+        }
+        else{
+            fn_name_list[id]="NO_FN  <<< Replaced by NO_FN"
+            #printf_log("\n"+"("+str(id)+") "+fn+"  <<< Replaced by NO_FN")
+        }
+    }
+    #printf_log(" GetCurrentFuncName : fn_name_sel_index=%d multiple_fn_found=%d \n", fn_name_sel_index,multiple_fn_found)
+    if (multiple_fn_found>1){
+        fn_name=fn_name_list[1]
+        fn_name_list[1]=fn_name
+    }
+    else{
+        #printf_log(fn_name_list)
+        fn_name=fn_name_list[fn_name_sel_index]
+    }
+    if (index(fn_name,"*")>1)
+        sub("*", "",fn_name);
+    #printf_log(" GetCurrentFuncName : %s \n", fn_name)
+    return fn_name
+}
+
+# Replace the matched string ($search_str1) with $(replace_str1) and also add msg_id = $("functionname_" + NoOfTracePrintFoundInFunction till now + ", ") as a first parameter
+function ReplaceMatchedStrWithMsgName(result,Line, LineNum, search_str, fn_name, max_msg_len, found, NoOfTracePrintInFun, TotalReplaced, TotalSkipped){
+    choise=1
+    MAX_MSG_NAME_LEN=63-9
+    #printf_log(" LineNum=%d \n",LineNum)
+    #while(choise!=0):
+        #c = input(" Enter (0)Skip, (1) - INFO , (2) - ERR, (3) - WAR, (4) - DEBUG ")
+        choise=1 #c
+        if (choise!=0){
+            if ((choise<0) && (choise>4))
+                printf_log("\n" " Incorrect choise -> Try again")
+            else{
+                NoOfTracePrintInFun+=1
+                Msg_Name=toupper(fn_name) "_" (NoOfTracePrintInFun)
+                msg_len_temp=length(Msg_Name)
+
+                if (msg_len_temp>max_msg_len)
+                    max_msg_len=msg_len_temp
+                # ADD MSG NAME to  DATA base
+                if (msg_len_temp<=(MAX_MSG_NAME_LEN)){
+                    #ret_code=AddMsgNameToDataBase(Msg_Name)
+                    ret_code=0
+                    if (ret_code!=-1){
+                        global TotalMsgNameAddedToDB
+                        TotalMsgNameAddedToDB+=ret_code
+                    }
+                }
+                temp_line=Line
+                if (found=="SEARCH_STR"){
+                    #printf_log(" R2: %s %s %s \n", found,Line ,search_str )
+                    if (index(Line,search_str) >= 1) {
+                        sub(search_str,replace_str1,temp_line)
+                    }
+                    #printf_log(" R2: %s %s %s %d \n", temp_line,replace_str1 ,search_str,index(temp_line,"(") )
+                    s_str="(";
+                    r_str=toupper(fn_name) "_" NoOfTracePrintInFun ", ";
+                    if ((index(temp_line,"(")) >= 1)
+                    {
+                        temp_line=substr(temp_line,0,index(temp_line,"(")) r_str substr(temp_line,index(temp_line,"(")+1)
+                    }
+                    #printf_log(" R2: %s ->%s-> %s \n", temp_line,s_str ,r_str )
+
+                }
+                else {
+                    if (found=="REPLACE_STR"){
+                        if (index(Line,",")>=1)
+                        {
+                            search=",";
+                            n=split(Line,array_m1,search);
+                            existing_msg_name = array_m1[1]
+                            if (index(array_m1[1],"(")>=1)
+                            {
+                                n=split(array_m1[1],array_m2,"(");
+                                existing_msg_name = array_m2[2]
+                            }
+                        }
+                        #printf_log(" R1: %s Msg_Name=%s existing_msg_name=%s \n", found,Msg_Name ,existing_msg_name )
+                        if (Msg_Name != existing_msg_name){
+                            if (index(temp_line,"(")>=1){
+                                sub(existing_msg_name,Msg_Name,temp_line)
+
+                            }
+                        }
+                    }
+                }
+                if (temp_line!=""){
+                    printf_log("\n" "----------------------------------------------------------------------------------------------")
+                    printf_log("\n\n  -----     Replaced: -- @Line:%d with %s   ------  \n", (LineNum),replace_str1 )
+                    printf_log("\n" "----------------------------------------------------------------------------------------------")
+                    printf_log("\n %s \n %s\n", Line ,temp_line)
+                    #Line=temp_line
+                    TotalReplaced+=1
+                }
+            }
+        }
+        else{
+            printf_log("\n" "----------------------------------------------------------------------------------------------")
+            printf_log("\n" "  ->           Skipped  :" LineNum "               \n\n")
+            TotalSkipped+=1
+        }
+        choise=0
+    result[3]=NoOfTracePrintInFun;
+    result[6]=TotalReplaced;
+    result[7]=TotalSkipped;
+    result[8]=temp_line;
+    #printf_log("TotalReplaced=%d %d\n",TotalReplaced,result[6])
+}
+
+# Parse each line to find any $search_str1 inside any function
+function ParseLineToFindTraceInsideFunc(result,Line,LineNum,prev,fn_start,fn_name,fn_name_list,NoOfTracePrintInFun,selected_fn_name,TotalReplaced,TotalSkipped)
+{
+    MAX_MSG_NAME_LEN=63-9
+    MAX_MSG_NAME_POSTFIX_LEN=4 #_123
+    #printf_log(" ParseLineToFindTraceInsideFunc LineNum=%d \n",LineNum)
+
+    {fn_start=result[1];    fn_name=result[2]; NoOfTracePrintInFun=result[3]; selected_fn_name=result[4];fn_name_list_cnt=result[5];TotalReplaced=result[6];TotalSkipped=result[7]}
+
+    #Check if we are inside any function
+    ParseLineToFindFunc(result,Line,LineNum,prev,fn_start,fn_name,fn_name_list,NoOfTracePrintInFun,selected_fn_name);
+
+    {fn_start=result[1];    fn_name=result[2]; NoOfTracePrintInFun=result[3]; selected_fn_name=result[4];}
+
+    # if we are inside function then fn_start>=1 and function is valid (fn_name!="Invalid")
+    if ((fn_start>=1) && (fn_name!="Invalid"))
+    {
+        #This case: we need to search for search_str1 and replace it with replace_str1 + add unique msg_id
+
+        found="NOT_FOUND"
+        #printf_log(" ParseLineToFindTraceInsideFunc 2: LineNum=%d \n",LineNum)
+        if (index(Line,search_str1)>=1)
+        {
+            found="SEARCH_STR"
+            search_str=search_str1
+        }
+        if (found=="NOT_FOUND"){
+            if (index(Line,replace_str1)>=1){
+                found="REPLACE_STR"
+                search_str=replace_str1
+                #break
+            }
+        }
+        #printf_log("found = %s %s\n",found,Line);
+        if (found!="NOT_FOUND"){
+            if (selected_fn_name=="Invalid"){
+                fn_name=GetCurrentFuncName(fn_name_list,LineNum)
+                selected_fn_name=""
+                if (length(fn_name)<=10){
+                    #printFuncMsg("ERROR: Msg Name is Inavlid",fn_name,LineNum,Line,False)
+                    #Wait For User Input
+                    return
+                }
+                #printFuncMsg("",fn_name,LineNum,Line,True)
+                fn_dict=0
+                if (length(fn_name)>(MAX_MSG_NAME_LEN-MAX_MSG_NAME_POSTFIX_LEN)){
+                    for (n in ict_msg_name){
+                        if (n == fn_name)
+                            fn_dict=1
+
+                    }
+                    if (fn_dict==1)
+                    {
+                        printFuncMsg("ERROR: Duplicate Msg Name",fn_name,LineNum,Line,True)
+                        fn_name=ict_msg_name[fn_name]
+                    }
+                    else {
+                        t_fn_name=""
+                        if (t_fn_name=="")
+                            t_fn_name = fn_name; #[0:(MAX_MSG_NAME_LEN-MAX_MSG_NAME_POSTFIX_LEN-1)]
+                        if (length(t_fn_name)<=(MAX_MSG_NAME_LEN-MAX_MSG_NAME_POSTFIX_LEN)){
+                            ict_msg_name[fn_name]=t_fn_name
+                            fn_name=t_fn_name
+                        }
+                        else{
+                            printFuncMsg("ERROR: Duplicate Msg Name Entered",fn_name,LineNum,Line,False)
+                            #Wait For User Input
+                            return
+                        }
+                    }
+                }
+            }
+            #Now Replace the string
+            ReplaceMatchedStrWithMsgName(result,Line, LineNum, search_str, fn_name, max_msg_len, found, NoOfTracePrintInFun, TotalReplaced, TotalSkipped)
+            #printf_log ("\n %s Replaced at Line %d with %s \n", Line, LineNum, replace_str1)
+            #printf_log ("\n %d %d %d \n", NoOfTracePrintInFun, TotalReplaced, TotalSkipped)
+        }
+    }
+    else
+        result[8]=Line;
+
+    #printf_log(" 1 TotalReplaced=%d %d\n",result[6],TotalReplaced)
+}
+
+function ParseLineToFindFunc(result,Line,LineNum,prev,fn_start,fn_name,fn_name_list,NoOfTracePrintInFun,selected_fn_name)
+{
+    extra_brace=0;
+    fn_name_list_cnt=0;
+    #printf_log(" found6: %s  %d \n",fn_name ,fn_name_found);
+    if (( Line ~ /\(/ ) && (fn_start==0))
+    {
+        pre_element=""
+        fn_name_found=0
+       if (Line ~ /^\(/)
+       {
+            search=")";
+            n=split(prev,array,search);
+            fn_name=array[n];
+            NoOfTracePrintInFun=0;
+            fn_name_found=1
+            #printf_log(" 2 %s \n",fn_name);
+       }
+       else
+        {
+            search=" ";
+            n=split(Line,array,search);
+            #printf_log("Line: %s  %d \n",Line ,fn_name_found);
+            for (i=1;i<=n;i++) {
+                if (array[i] ~ /\(/)
+                {
+                    if (length(array[i]) == 1){
+                        fn_name=pre_element
+                        fn_name_found=10
+                    }
+                    search2="(";
+                    n2=split(array[i],array2,search2);
+                    if (length(array2[1]) == 0)#if element.split("(")[0]=="":
+                    {
+                        #printf_log("array2[1]: %s  %d \n",array2[1] ,fn_name_found);
+                        if ( (length(array2[2]) >= 1) && (index(array2[2],"*")>1)&& (index(array2[2],"*")>2) )
+                        {
+                            fn_name = pre_element
+                            fn_name_found=2
+                        }
+                        else
+                        {
+                            if ((length(array2[2]) > 0) && (index(array2[2],"*")>1))
+                            {
+                                fn_name = pre_element
+                                fn_name_found=3
+                            }
+                        }
+                    }
+                    else
+                    {
+                        #printf_log("array2[1]: %s  %d \n",array2[1] ,fn_name_found);
+                        #printf_log(" %s  %d \n",fn_name ,fn_name_found);
+                        fn_name=array2[1];
+                        if (index(array2[1]," ")>=1)
+                        {
+                            sub(" ","",fn_name); # element.split("(")[0].replace(" ", "")
+                        }
+                            #printf_log("array2[1]: %s  %d \n",array2[1] ,fn_name_found);
+                            fn_name_found=4
+                        #printf_log(" found: %s  %d \n",fn_name ,fn_name_found);
+                    }
+                    NoOfTracePrintInFun=0;
+                }
+                if (index(array[i]," ")>=1){
+                    sub(" ", "",array[i]);
+                }
+                pre_element=array[i]
+            }
+        }
+        #printf_log(" found5: %s  %d \n",fn_name ,fn_name_found);
+        if (fn_name_found!=0)
+        {
+            selected_fn_name="Invalid"
+            if (index(fn_name,"~")>=1)
+            {
+                sub("~", "D",fn_name)
+            }
+            fn_name_list[++fn_name_list_cnt]=fn_name
+            #printf_log(" [fn_name_found!=0] %s  %d \n",fn_name ,fn_name_found);
+        }
+    }
+    #printf_log(" found4: %s  %d \n",fn_name ,fn_name_found);
+    if (Line ~ /{/ )
+    {
+        if (Line ~ /"extern \"C\" {"/ ) {
+            extra_brace+=1;
+        }
+        else {
+            fn_start+=1;
+        }
+    }
+    if (Line ~ /}/ ) {
+        if (fn_start == 0) {
+            fn_name="Invalid"
+            if (extra_brace!=0){
+                extra_brace-=1
+            }
+            else {
+                printFuncMsg("ERROR - Invalid END '}'","",LineNum,Line,False)
+                #Wait For User Input
+            }
+        }
+        else {
+            fn_start-=1;
+            if (fn_start==0){
+                fn_name_list_cnt=0
+                #printf_log(" found12: %s  %d \n",fn_name ,fn_name_found );
+                fn_name="Invalid"
+            }
+        }
+    }
+    #printf_log(" found2: %s  %d \n",fn_name ,fn_name_found);
+    result[1]=fn_start
+    result[2]=fn_name;
+    result[3]=NoOfTracePrintInFun;
+    result[4]=selected_fn_name;
+    result[5]=fn_name_list_cnt;
+    #printf_log(" found3: %s  %d %d\n",fn_name ,fn_name_found , fn_start);
+    #printf_log(" END of ParseLineToFindFunc \n");
+}
+END {printf_log(" TotalReplaced=%d, TotalSkipped=%d NoOfTracePrintInLastFun=%d \n", result[6],result[7], result[3])}
+' > $1".temp"
