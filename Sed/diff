@@ -1,0 +1,35 @@
+diff --git a/test.c b/test.c.temp
+index 6b8d4636bb85..20e7a0870ed7 100644
+--- a/test.c
++++ b/test.c.temp
+@@ -1,8 +1,8 @@
+ void my_test_fn  (void * p, void (*fp)(int))
+ {
+   
+-  trace_print("this is a test");
+-  trace_print("this is a test 2");
++  TRACE_INFO(MY_TEST_FN_4,"this is a test");
++  TRACE_INFO(MY_TEST_FN_5,"this is a test 2");
+ }
+ 
+   trace_print("this is a test 3");
+@@ -14,7 +14,7 @@ void my_test_fn2(void * p, void *fp) {
+   {
+     if (!fp)
+     {
+-      trace_print("this is a test fn 2 %d %d \n",*fp,*p);
++      TRACE_INFO(MY_TEST_FN2_17,"this is a test fn 2 %d %d \n",*fp,*p);
+     }
+   }
+ }
+@@ -22,9 +22,9 @@ void my_test_fn2(void * p, void *fp) {
+ trace_print(" This shall not be changed ");
+ void My_test_funciton(void* p, int q,char arr)
+ {
+-  trace_print("this is a test 5");
+-    trace_print("this is a test 6");
+-  trace_print( "Replace this fn  %d %d %c ",*p,q, *arr);
++  TRACE_INFO(MY_TEST_FUNCITON_25,"this is a test 5");
++    TRACE_INFO(MY_TEST_FUNCITON_26,"this is a test 6");
++  TRACE_INFO(MY_TEST_FUNCITON_27, "Replace this fn  %d %d %c ",*p,q, *arr);
+ }
