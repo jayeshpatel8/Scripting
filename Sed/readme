@@ -1,5 +1,7 @@
- Replaces the matched string specified by (search_str) with (replace_str1) if its inside any function
- Find currently its inside which function and Line Number
+ 
+ Replaces the matched string specified by (search_str) with (replace_str) if its inside any function
+ search_str & replace_str are also a function name
+ Find search_str currently inside which function and Line Number
  Prepare msg_id = $("functionname" "_" "line Nuber", ") 
  Add this prepared msg_id as a first parameter to matched search_str
  output file : file_name.temp cotains replaced text
@@ -9,8 +11,9 @@
 Example: ./FindReplaceTraceFunction_Sed test.c trace_print TRACE_INFO
 *************************************************************************
 
-
+*************************************************************************
 Input file: test.c
+*************************************************************************
 void my_test_fn  (void * p, void (*fp)(int))
 {
 
