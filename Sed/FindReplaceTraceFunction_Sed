@@ -15,54 +15,40 @@ else
     fi
 cat  -n $1 | sed -n "$!N;:start;$!{
     /\n/ !N;
-    /{/ !{  #We are not inside function ,Just print the line as move to next line,go to start
-         x;/{/ {    # Case for Function name already found,its on HOLD space
-               x;H;s/\n.*//p ;x;h;s/.*\n\(.*\)/\1/;x;s/\(.*\)\n.*\n.*/\1/;x;N;b start}
-         x;/{/ !{h; s/\n.*//p ;x;s/.*\n\(.*\)/\1/;N;b start}  # Case for Function name NOT found
-         }
-     /)[ ]*[\n]*.*{/ {             # Check for line having { of Function
+    /{/ !{P;D;N;b start}#We are not inside function ,Just print the line and move to next line
+    /)[ ]*[\n]*.*{/ {             # Check for line having { of Function
                      /.*{.*}.*\n.*/ {p;n;b start}  #Print the line if it has both {} brace and move to next Line
                      /.*\n.*{.*}.*/ {p;n;b start}  #Print the line if it has both {} brace and move to next Line
                      x
                      /{/ { s/{/{{/;x;p;b SearchStr} #Opening { found, append it to Function_name stored on HOLD space
                      /{/ !{    #Hold space doesnot have FunctionName
-                                {s/.*//;}
-                                x
-                                p;
+                                z;x;p;
                                 :a;{s/\( .*\)\( *(.*\)/\1/ ; ta;} # recursively remove string after function bracket (
                                 s/ *$// # Remove if any space at end of line
                                 # Get function name , convert to Upper case , Push to Hold buffer , then jump to SearchStr
-                                s/.* \(.*\)/\1{/;y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/; H;tSearchStr;
+                                s/.* \(.*\)/\1{/;y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/; h;tSearchStr;
                           }
                           b
                           :SearchStr
                           $!  {
-                                :b2
+                                :NextLine
                                  n                   # Add Next Line to Pattern space
                                  /$SEARCH_STRING/ !{p;} # Print Line as it is as
-                                /{/ {x;s/{/{{/;x;tb2;} # if '{' found go to NextLine
+                                /{/ {x;s/{/{{/;x;tNextLine;} # Inside Fn , go to NextLine
                                 /}/ {x;s/{//;
-                                        /{/ {x;b b2;} # if '{' found go to NextLine
-                                        /{/ !{x;b} # if '}' found Exit SearchStr()
+                                        /{/ {x;b NextLine;} # Inside Fn ,go to NextLine
+                                        x;b # if '}' found Exit SearchStr()
                                     }
-                                /$SEARCH_STRING/  {
-                                                        H              # Push it to Hold buffer
-                                                        s/.*//
-                                                        x              # Get function name + current line to Pattern space
-                                                        #Replace the string and add Function Name + curent Line as first parameter
-                                                        s/\n*\(.*{*\)\n\( *\)\([0-9]*\)\(.*\)$SEARCH_STRING(\(.*;\)\n*/\2\3\4$REPLACE_STRING(\1_\3,\5/
-                                                        h
-                                                         s/\(.*[a-zA-z0-9]\){{*_\([0-9][0-9]*\)/\1_\2/p
-                                                        x
-                                                        s/.*(\(.*[a-zA-z0-9]{{*\)_.*/\1/ #Get function name to Pattern space
-                                                        x  # Push the Function name to Hold buffer
+                                /$SEARCH_STRING/  {    # Replace the string and add Function Name + curent Line as first parameter
+                                                        G #Get fn name to PATT
+                                                        s/\( *\)\([0-9]*\)\(.*\)$SEARCH_STRING *(\(.*;\)\n*\n\(.*[^{]\).*/\1\2\3$REPLACE_STRING(\5_\2,\4/
+                                                        p
                                                   }
-                                b b2 # Go to Next Line
+                                b NextLine # Go to Next Line
                           }
-                     }
-
-}" | sed -rn '{s/^[ ]*[0-9]+\t//p}' > $1.temp # Remove the \tLine number from file
-     cat $1.temp
+                    }
+}" | sed -rn '{s/^[ ]*[0-9]+\t//p}' > $1.temp # Remove the space Line number \t from file
+    # cat $1.temp
      echo ""
      echo "--- Output file : $1.temp"
 fi
