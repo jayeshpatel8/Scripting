@@ -1,0 +1,75 @@
+#!/bin/bash
+SEARCH_STRING="trace_print"
+REPLACE_STRING="TRACE_INFO"
+NUM=0
+if [ "$1" = "" ]; then
+  echo "Usage $0 fileName SearchString ReplaceString : Output file filename.temp"
+  echo "Defaults: SearchString=$SEARCH_STRING ReplaceString=$REPLACE_STRING"
+  echo "           Replaces the matched string specified by (search_str) with (replace_str) if its inside any function          "
+  echo "           Find currently its inside which function and Number of time serach_str found in fn                           "
+  echo "           Prepare message_id = functionname _ No of time search_str found till now inside current function ,  "
+  echo "           Add this prepared message_id as a first parameter to matched search_str                                       "
+  echo "           output file : file_name.temp cotains replaced text                                                            "
+  echo "           Input to Script:                                                                                          "
+  echo "                void My_test_funciton(void\* p, int q,char arr)                                                           "
+  echo "               {                                                                                                         "
+  echo "                trace_print("this is a test 5");                                                                         "
+  echo "                  trace_print("this is a test 6");                                                                       "
+  echo "                trace_print( "Replace this fn  %d %d %c ",*p,q, *arr);                                                   "
+  echo "               }                                                                                                         "
+  echo "           Output of Script:                                                                                         "
+  echo "              void My_test_funciton(void* p, int q,char arr)                                                             "
+  echo "              {                                                                                                          "
+  echo "               TRACE_INFO(MY_TEST_FUNCITON_1,"this is a test 5");                                                        "
+  echo "                 TRACE_INFO(MY_TEST_FUNCITON_2,"this is a test 6");                                                      "
+  echo "               TRACE_INFO(MY_TEST_FUNCITON_3, "Replace this fn  %d %d %c ",*p,q, *arr);                                  "
+  echo "              }"
+else
+    if [ "$2" != "" ]; then
+      SEARCH_STRING=$2
+      echo "Search String: $SEARCH_STRING"
+    fi
+    if [ "$3" != "" ]; then
+      REPLACE_STRING=$3
+      echo "Replace String: $REPLACE_STRING"
+    fi
+cat   $1 | sed -n "$!N;:start;$!{
+    /\n/ !N;
+    /{/ !{  P;D;N;b start}#We are not inside function ,Just print the line and move to next line,go to start
+     /)[ ]*[\n]*.*{/ {             # Check for line having { of Function
+                     /.*{.*}.*\n.*/ {p;n;b start}  #Print the line if it has both {} brace and move to next Line
+                     /.*\n.*{.*}.*/ {p;n;b start}  #Print the line if it has both {} brace and move to next Line
+                     x
+                     /{/ { s/{/{{/;x;p;b SearchStr} #Opening { found, append it to Function_name stored on HOLD space
+                     /{/ !{    #Hold space doesnot have FunctionName
+                                z;x;p;
+                                :a;{s/\( .*\)\( *(.*\)/\1/ ; ta;} # recursively remove string after function bracket (
+                                s/ *$// # Remove if any space at end of line
+                                # Get function name , convert to Upper case , Push to Hold buffer , then jump to SearchStr
+                                s/.* \(.*\)/\1{\n$NUM/;y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/; h;tSearchStr;
+                          }
+                          b
+                          :SearchStr
+                          $!  {
+                                :NextLine
+                                 n                   # Add Next Line to Pattern space
+                                 /$SEARCH_STRING/ !{p;} # Print Line as it is as
+                                /{/ {x;s/{/{{/;x;tNextLine;} # Inside Fn , go to NextLine
+                                /}/ {x;s/{//;
+                                        /{/ {x;b NextLine;} # Inside Fn ,go to NextLine
+                                        x;b # if '}' found Exit SearchStr()
+                                    }
+                                /$SEARCH_STRING/  {    # Replace the string and add Function Name + NoOfTracePrint as first parameter
+                                x;s/\(.*\)\n\([0-9]*\).*/echo \"\1\n\$((\2+1))\"/e
+                                x;G;
+                                s/\( *\)\([0-9]*\)\(.*\)$SEARCH_STRING *(\(.*;\)\n*\n\(.*[^{]\).*\n\([0-9]*\)\n*/\1\2\3$REPLACE_STRING(\5_\6,\4/
+                                p
+                                }
+                                b NextLine # Go to Next Line
+                          }
+                     }
+}">$1.temp
+#     cat $1.temp
+     echo ""
+     echo "--- Output file : $1.temp"
+fi
