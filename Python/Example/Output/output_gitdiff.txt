@@ -1,0 +1,49 @@
+diff --git a/test3.cpp b/test3.cpp.temp
+index c15024fdcbc9..a4959dc7d460 100644
+--- a/test3.cpp
++++ b/test3.cpp.temp
+@@ -4 +4 @@ void my_test_fn1  (void * p, void (*fp)(int))
+-  trace_print("this is a test");
++  TRACE_INFO(MY_TEST_FN1_1, "this is a test");
+@@ -6 +6 @@ void my_test_fn1  (void * p, void (*fp)(int))
+-  trace_print("this is a test 2");
++  TRACE_INFO(MY_TEST_FN1_2, "this is a test 2");
+@@ -27 +27 @@ void my_test_fn2(void * p, void *fp) {
+-                  trace_print("this is a test fn 2 %d %d \n",*fp,*p);
++                  TRACE_INFO(MY_TEST_FN2_1, "this is a test fn 2 %d %d \n",*fp,*p);
+@@ -46 +46 @@ void my_test_fn2(void * p, void *fp) {
+-                  trace_print("this is a test fn 2 %d %d \n",*fp,*p);
++                  TRACE_INFO(MY_TEST_FN2_2, "this is a test fn 2 %d %d \n",*fp,*p);
+@@ -55 +55 @@ void my_test_fn2(void * p, void *fp) {
+-          trace_print("this is a test fn 2 %d %d \n",*fp,*p);
++          TRACE_INFO(MY_TEST_FN2_3, "this is a test fn 2 %d %d \n",*fp,*p);
+@@ -69 +69 @@ void my_test_fn2(void * p, void *fp) {
+-                  trace_print("this is a test fn 2 %d %d \n",*fp,*p);
++                  TRACE_INFO(MY_TEST_FN2_4, "this is a test fn 2 %d %d \n",*fp,*p);
+@@ -81,3 +81,3 @@ void My_test_function(void* p, int q,char arr)
+-  trace_print("this is a test 5");
+-    trace_print("this is a test 6");
+-  trace_print( "Replace this fn  %d %d %c ",*p,q, *arr);
++  TRACE_INFO(MY_TEST_FUNCTION_1, "this is a test 5");
++    TRACE_INFO(MY_TEST_FUNCTION_2, "this is a test 6");
++  TRACE_INFO(MY_TEST_FUNCTION_3,  "Replace this fn  %d %d %c ",*p,q, *arr);
+@@ -86,3 +86,3 @@ void My_test_function(void* p, int q,char arr)
+-       trace_print("this is a test 5");
+-    trace_print("this is a test 6");
+-  trace_print( "Replace this fn  %d %d %c ",*p,q, *arr);
++       TRACE_INFO(MY_TEST_FUNCTION_4, "this is a test 5");
++    TRACE_INFO(MY_TEST_FUNCTION_5, "this is a test 6");
++  TRACE_INFO(MY_TEST_FUNCTION_6,  "Replace this fn  %d %d %c ",*p,q, *arr);
+@@ -91,6 +91,6 @@ void My_test_function(void* p, int q,char arr)
+-  trace_print("this is a test 5");
+-    trace_print("this is a test 6");
+-  trace_print( "Replace this fn  %d %d %c ",*p,q, *arr);
+- trace_print("this is a test 5");
+-   trace_print("this is a test 6");
+- trace_print( "Replace this fn  %d %d %c ",*p,q, *arr);
++  TRACE_INFO(MY_TEST_FUNCTION_7, "this is a test 5");
++    TRACE_INFO(MY_TEST_FUNCTION_8, "this is a test 6");
++  TRACE_INFO(MY_TEST_FUNCTION_9,  "Replace this fn  %d %d %c ",*p,q, *arr);
++ TRACE_INFO(MY_TEST_FUNCTION_10, "this is a test 5");
++   TRACE_INFO(MY_TEST_FUNCTION_11, "this is a test 6");
++ TRACE_INFO(MY_TEST_FUNCTION_12,  "Replace this fn  %d %d %c ",*p,q, *arr);
