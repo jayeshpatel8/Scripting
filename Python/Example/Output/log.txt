@@ -1,0 +1,1127 @@
+
+****** SUCCESS: File List created ******
+['test.c', 'test1.c', 'test2.c', 'test3.cpp']
+File  test.c is opened:
+Scanning for Message NAME in file test.c...
+(void my_test_fn1
+(*fp)(int)) void
+1:-2-my_test_fn1
+{ 1 ->2 {
+
+(0) my_test_fn1
+Line:(4), fn = my_test_fn1
+-############################################################################
+-###################      ###################
+Function: --   my_test_fn1()  --  4  --    trace_print("this is a test");
+
+-############################################################################
+Function- -- my_test_fn1()  --  4  --  
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --4 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+   trace_print("this is a test");
+ 
+   TRACE_INFO(MY_TEST_FN1_1, "this is a test");
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --6 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+   trace_print("this is a test 2");
+ 
+   TRACE_INFO(MY_TEST_FN1_2, "this is a test 2");
+
+} 1 ->8 }
+
+ } --fn_name_list is Clear--
+trace_print("this 
+10:-4-trace_print
+trace_print("this 
+11:-4-trace_print
+defined(TRACE_ON_1) #if
+!defined(TRACE_ON_2) &&
+!defined(TRACE_ON_3) &&
+12:-4-!defined
+my_test_fn2(void void
+14:-4-my_test_fn2
+{ 1 ->14 void my_test_fn2(void * p, void *fp) {
+
+{ 2 ->16   {
+
+{ 3 ->18       {
+
+{ 4 ->20         {
+
+{ 5 ->22           {
+
+{ 6 ->24               {
+
+{ 7 ->26                 {
+
+(0) trace_print
+(1) trace_print
+(3) my_test_fn2
+-############################################################################
+-###################      ###################
+Function: --   my_test_fn2()  --  27  --                    trace_print("this is a test fn 2 %d %d \n",*fp,*p);
+
+-############################################################################
+Function- -- my_test_fn2()  --  27  --  
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --27 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+                   trace_print("this is a test fn 2 %d %d \n",*fp,*p);
+ 
+                   TRACE_INFO(MY_TEST_FN2_1, "this is a test fn 2 %d %d \n",*fp,*p);
+
+} 7 ->28                 }
+
+} 6 ->29               }
+
+} 5 ->30           }
+
+} 4 ->31         }
+
+} 3 ->32       }
+
+} 2 ->33   }
+
+{ 2 ->35   {
+
+{ 3 ->37       {
+
+{ 4 ->39         {
+
+{ 5 ->41           {
+
+{ 6 ->43               {
+
+{ 7 ->45                 {
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --46 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+                   trace_print("this is a test fn 2 %d %d \n",*fp,*p);
+ 
+                   TRACE_INFO(MY_TEST_FN2_2, "this is a test fn 2 %d %d \n",*fp,*p);
+
+} 7 ->47                 }
+
+} 6 ->48               }
+
+} 5 ->49           }
+
+} 4 ->50         }
+
+} 3 ->51       }
+
+} 2 ->52   }
+
+{ 2 ->54         {
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --55 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+           trace_print("this is a test fn 2 %d %d \n",*fp,*p);
+ 
+           TRACE_INFO(MY_TEST_FN2_3, "this is a test fn 2 %d %d \n",*fp,*p);
+
+} 2 ->56         }
+
+{ 2 ->58   {
+
+{ 3 ->60       {
+
+{ 4 ->62         {
+
+{ 5 ->64           {
+
+{ 6 ->66               {
+
+{ 7 ->68                 {
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --69 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+                   trace_print("this is a test fn 2 %d %d \n",*fp,*p);
+ 
+                   TRACE_INFO(MY_TEST_FN2_4, "this is a test fn 2 %d %d \n",*fp,*p);
+
+} 7 ->70                 }
+
+} 6 ->71               }
+
+} 5 ->72           }
+
+} 4 ->73         }
+
+} 3 ->74       }
+
+} 2 ->75   }
+
+} 1 ->76 }
+
+ } --fn_name_list is Clear--
+trace_print(" 
+78:-4-trace_print
+My_test_function(void* void
+79:-4-My_test_function
+{ 1 ->80 {
+
+(0) trace_print
+(1) My_test_function
+-############################################################################
+-###################      ###################
+Function: --   My_test_function()  --  81  --      trace_print("Patch this test 5");
+
+-############################################################################
+Function- -- My_test_function()  --  81  --  
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --81 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+     trace_print("Patch this test 5");
+ 
+     TRACE_INFO(MY_TEST_FUNCTION_1, "Patch this test 5");
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --82 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+     TRACE_INFO(My_TEST_FUNCTION_1, "Repair this  test 6");
+ 
+     TRACE_INFO(MY_TEST_FUNCTION_2, "Repair this  test 6");
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --83 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+     trace_print( "Patch this 7  %d %d %c ",*p,q, *arr);
+ 
+     TRACE_INFO(MY_TEST_FUNCTION_3,  "Patch this 7  %d %d %c ",*p,q, *arr);
+
+} 1 ->84 }
+
+ } --fn_name_list is Clear--File Name      MaxMsgLen    Total    Repl    Skipped    AddMsgDB    DupMsgDB
+-----------  -----------  -------  ------  ---------  ----------  ----------
+test.c                18        9       9          0           0           0
+Done!   TRACE_INFO(MY_TEST_FN1_1, "this is a test");
+!   TRACE_INFO(MY_TEST_FN1_2, "this is a test 2");
+!                   TRACE_INFO(MY_TEST_FN2_1, "this is a test fn 2 %d %d \n",*fp,*p);
+!                   TRACE_INFO(MY_TEST_FN2_2, "this is a test fn 2 %d %d \n",*fp,*p);
+!           TRACE_INFO(MY_TEST_FN2_3, "this is a test fn 2 %d %d \n",*fp,*p);
+!                   TRACE_INFO(MY_TEST_FN2_4, "this is a test fn 2 %d %d \n",*fp,*p);
+!     TRACE_INFO(MY_TEST_FUNCTION_1, "Patch this test 5");
+!     TRACE_INFO(MY_TEST_FUNCTION_2, "Repair this  test 6");
+!     TRACE_INFO(MY_TEST_FUNCTION_3,  "Patch this 7  %d %d %c ",*p,q, *arr);
+Diff Util    File Name      Total TP verified    Total TP Failed    Cnt1    Cnt2
+-----------  -----------  -------------------  -----------------  ------  ------
+Diff         test.c                         9                  0       0       0
+Git-diff     test.c                         9                  0       0       0
+File test.c is Closed:
+File  test1.c is opened:
+Scanning for Message NAME in file test1.c...
+(void my_test_fn1
+(*fp)(int)) void
+1:-2-my_test_fn1
+{ 1 ->2 {
+
+(0) my_test_fn1
+Line:(4), fn = my_test_fn1
+-############################################################################
+-###################      ###################
+Function: --   my_test_fn1()  --  4  --    trace_print("this is a test");
+
+-############################################################################
+Function- -- my_test_fn1()  --  4  --  
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --4 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+   trace_print("this is a test");
+ 
+   TRACE_INFO(MY_TEST_FN1_1, "this is a test");
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --6 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+   trace_print("this is a test 2");
+ 
+   TRACE_INFO(MY_TEST_FN1_2, "this is a test 2");
+
+} 1 ->8 }
+
+ } --fn_name_list is Clear--
+trace_print("this 
+10:-4-trace_print
+trace_print("this 
+11:-4-trace_print
+defined(TRACE_ON_1) #if
+!defined(TRACE_ON_2) &&
+!defined(TRACE_ON_3) &&
+12:-4-!defined
+my_test_fn2(void void
+14:-4-my_test_fn2
+{ 1 ->14 void my_test_fn2(void * p, void *fp) {
+
+{ 2 ->16   {
+
+{ 3 ->18       {
+
+{ 4 ->20         {
+
+{ 5 ->22           {
+
+{ 6 ->24               {
+
+{ 7 ->26                 {
+
+(0) trace_print
+(1) trace_print
+(3) my_test_fn2
+-############################################################################
+-###################      ###################
+Function: --   my_test_fn2()  --  27  --                    trace_print("this is a test fn 2 %d %d \n",*fp,*p);
+
+-############################################################################
+Function- -- my_test_fn2()  --  27  --  
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --27 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+                   trace_print("this is a test fn 2 %d %d \n",*fp,*p);
+ 
+                   TRACE_INFO(MY_TEST_FN2_1, "this is a test fn 2 %d %d \n",*fp,*p);
+
+} 7 ->28                 }
+
+} 6 ->29               }
+
+} 5 ->30           }
+
+} 4 ->31         }
+
+} 3 ->32       }
+
+} 2 ->33   }
+
+{ 2 ->35   {
+
+{ 3 ->37       {
+
+{ 4 ->39         {
+
+{ 5 ->41           {
+
+{ 6 ->43               {
+
+{ 7 ->45                 {
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --46 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+                   trace_print("this is a test fn 2 %d %d \n",*fp,*p);
+ 
+                   TRACE_INFO(MY_TEST_FN2_2, "this is a test fn 2 %d %d \n",*fp,*p);
+
+} 7 ->47                 }
+
+} 6 ->48               }
+
+} 5 ->49           }
+
+} 4 ->50         }
+
+} 3 ->51       }
+
+} 2 ->52   }
+
+{ 2 ->54         {
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --55 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+           trace_print("this is a test fn 2 %d %d \n",*fp,*p);
+ 
+           TRACE_INFO(MY_TEST_FN2_3, "this is a test fn 2 %d %d \n",*fp,*p);
+
+} 2 ->56         }
+
+{ 2 ->58   {
+
+{ 3 ->60       {
+
+{ 4 ->62         {
+
+{ 5 ->64           {
+
+{ 6 ->66               {
+
+{ 7 ->68                 {
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --69 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+                   trace_print("this is a test fn 2 %d %d \n",*fp,*p);
+ 
+                   TRACE_INFO(MY_TEST_FN2_4, "this is a test fn 2 %d %d \n",*fp,*p);
+
+} 7 ->70                 }
+
+} 6 ->71               }
+
+} 5 ->72           }
+
+} 4 ->73         }
+
+} 3 ->74       }
+
+} 2 ->75   }
+
+} 1 ->76 }
+
+ } --fn_name_list is Clear--
+trace_print(" 
+78:-4-trace_print
+My_test_function(void* void
+79:-4-My_test_function
+{ 1 ->80 {
+
+(0) trace_print
+(1) My_test_function
+-############################################################################
+-###################      ###################
+Function: --   My_test_function()  --  81  --    trace_print("this is a test 5");
+
+-############################################################################
+Function- -- My_test_function()  --  81  --  
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --81 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+   trace_print("this is a test 5");
+ 
+   TRACE_INFO(MY_TEST_FUNCTION_1, "this is a test 5");
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --82 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+     trace_print("this is a test 6");
+ 
+     TRACE_INFO(MY_TEST_FUNCTION_2, "this is a test 6");
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --83 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+   trace_print( "Replace this fn  %d %d %c ",*p,q, *arr);
+ 
+   TRACE_INFO(MY_TEST_FUNCTION_3,  "Replace this fn  %d %d %c ",*p,q, *arr);
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --84 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+   trace_print("this is a test 5");
+ 
+   TRACE_INFO(MY_TEST_FUNCTION_4, "this is a test 5");
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --85 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+     trace_print("this is a test 6");
+ 
+     TRACE_INFO(MY_TEST_FUNCTION_5, "this is a test 6");
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --86 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+   trace_print( "Replace this fn  %d %d %c ",*p,q, *arr);
+ 
+   TRACE_INFO(MY_TEST_FUNCTION_6,  "Replace this fn  %d %d %c ",*p,q, *arr);
+
+} 1 ->87 }
+
+ } --fn_name_list is Clear--File Name      MaxMsgLen    Total    Repl    Skipped    AddMsgDB    DupMsgDB
+-----------  -----------  -------  ------  ---------  ----------  ----------
+test1.c               18       12      12          0           0           0
+Done!   TRACE_INFO(MY_TEST_FN1_1, "this is a test");
+!   TRACE_INFO(MY_TEST_FN1_2, "this is a test 2");
+!                   TRACE_INFO(MY_TEST_FN2_1, "this is a test fn 2 %d %d \n",*fp,*p);
+!                   TRACE_INFO(MY_TEST_FN2_2, "this is a test fn 2 %d %d \n",*fp,*p);
+!           TRACE_INFO(MY_TEST_FN2_3, "this is a test fn 2 %d %d \n",*fp,*p);
+!                   TRACE_INFO(MY_TEST_FN2_4, "this is a test fn 2 %d %d \n",*fp,*p);
+!   TRACE_INFO(MY_TEST_FUNCTION_1, "this is a test 5");
+!     TRACE_INFO(MY_TEST_FUNCTION_2, "this is a test 6");
+!   TRACE_INFO(MY_TEST_FUNCTION_3,  "Replace this fn  %d %d %c ",*p,q, *arr);
+!   TRACE_INFO(MY_TEST_FUNCTION_4, "this is a test 5");
+!     TRACE_INFO(MY_TEST_FUNCTION_5, "this is a test 6");
+!   TRACE_INFO(MY_TEST_FUNCTION_6,  "Replace this fn  %d %d %c ",*p,q, *arr);
+Diff Util    File Name      Total TP verified    Total TP Failed    Cnt1    Cnt2
+-----------  -----------  -------------------  -----------------  ------  ------
+Diff         test1.c                       12                  0       0       0
+Git-diff     test1.c                       12                  0       0       0
+File test1.c is Closed:
+File  test2.c is opened:
+Scanning for Message NAME in file test2.c...
+(void my_test_fn1
+(*fp)(int)) void
+1:-2-my_test_fn1
+{ 1 ->2 {
+
+(0) my_test_fn1
+Line:(4), fn = my_test_fn1
+-############################################################################
+-###################      ###################
+Function: --   my_test_fn1()  --  4  --    trace_print("this is a test");
+
+-############################################################################
+Function- -- my_test_fn1()  --  4  --  
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --4 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+   trace_print("this is a test");
+ 
+   TRACE_INFO(MY_TEST_FN1_1, "this is a test");
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --6 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+   trace_print("this is a test 2");
+ 
+   TRACE_INFO(MY_TEST_FN1_2, "this is a test 2");
+
+} 1 ->8 }
+
+ } --fn_name_list is Clear--
+trace_print("this 
+10:-4-trace_print
+trace_print("this 
+11:-4-trace_print
+defined(TRACE_ON_1) #if
+!defined(TRACE_ON_2) &&
+!defined(TRACE_ON_3) &&
+12:-4-!defined
+my_test_fn2(void void
+14:-4-my_test_fn2
+{ 1 ->14 void my_test_fn2(void * p, void *fp) {
+
+{ 2 ->16   {
+
+{ 3 ->18       {
+
+{ 4 ->20         {
+
+{ 5 ->22           {
+
+{ 6 ->24               {
+
+{ 7 ->26                 {
+
+(0) trace_print
+(1) trace_print
+(3) my_test_fn2
+-############################################################################
+-###################      ###################
+Function: --   my_test_fn2()  --  27  --                    trace_print("this is a test fn 2 %d %d \n",*fp,*p);
+
+-############################################################################
+Function- -- my_test_fn2()  --  27  --  
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --27 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+                   trace_print("this is a test fn 2 %d %d \n",*fp,*p);
+ 
+                   TRACE_INFO(MY_TEST_FN2_1, "this is a test fn 2 %d %d \n",*fp,*p);
+
+} 7 ->28                 }
+
+} 6 ->29               }
+
+} 5 ->30           }
+
+} 4 ->31         }
+
+} 3 ->32       }
+
+} 2 ->33   }
+
+{ 2 ->35   {
+
+{ 3 ->37       {
+
+{ 4 ->39         {
+
+{ 5 ->41           {
+
+{ 6 ->43               {
+
+{ 7 ->45                 {
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --46 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+                   trace_print("this is a test fn 2 %d %d \n",*fp,*p);
+ 
+                   TRACE_INFO(MY_TEST_FN2_2, "this is a test fn 2 %d %d \n",*fp,*p);
+
+} 7 ->47                 }
+
+} 6 ->48               }
+
+} 5 ->49           }
+
+} 4 ->50         }
+
+} 3 ->51       }
+
+} 2 ->52   }
+
+{ 2 ->54         {
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --55 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+           trace_print("this is a test fn 2 %d %d \n",*fp,*p);
+ 
+           TRACE_INFO(MY_TEST_FN2_3, "this is a test fn 2 %d %d \n",*fp,*p);
+
+} 2 ->56         }
+
+{ 2 ->58   {
+
+{ 3 ->60       {
+
+{ 4 ->62         {
+
+{ 5 ->64           {
+
+{ 6 ->66               {
+
+{ 7 ->68                 {
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --69 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+                   trace_print("this is a test fn 2 %d %d \n",*fp,*p);
+ 
+                   TRACE_INFO(MY_TEST_FN2_4, "this is a test fn 2 %d %d \n",*fp,*p);
+
+} 7 ->70                 }
+
+} 6 ->71               }
+
+} 5 ->72           }
+
+} 4 ->73         }
+
+} 3 ->74       }
+
+} 2 ->75   }
+
+} 1 ->76 }
+
+ } --fn_name_list is Clear--
+trace_print(" 
+78:-4-trace_print
+My_test_function(void* void
+79:-4-My_test_function
+{ 1 ->80 {
+
+(0) trace_print
+(1) My_test_function
+-############################################################################
+-###################      ###################
+Function: --   My_test_function()  --  81  --    trace_print("this is a test 5");
+
+-############################################################################
+Function- -- My_test_function()  --  81  --  
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --81 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+   trace_print("this is a test 5");
+ 
+   TRACE_INFO(MY_TEST_FUNCTION_1, "this is a test 5");
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --82 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+     trace_print("this is a test 6");
+ 
+     TRACE_INFO(MY_TEST_FUNCTION_2, "this is a test 6");
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --83 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+   trace_print( "Replace this fn  %d %d %c ",*p,q, *arr);
+ 
+   TRACE_INFO(MY_TEST_FUNCTION_3,  "Replace this fn  %d %d %c ",*p,q, *arr);
+
+{ 2 ->85   {
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --86 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+        trace_print("this is a test 5");
+ 
+        TRACE_INFO(MY_TEST_FUNCTION_4, "this is a test 5");
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --87 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+     trace_print("this is a test 6");
+ 
+     TRACE_INFO(MY_TEST_FUNCTION_5, "this is a test 6");
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --88 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+   trace_print( "Replace this fn  %d %d %c ",*p,q, *arr);
+ 
+   TRACE_INFO(MY_TEST_FUNCTION_6,  "Replace this fn  %d %d %c ",*p,q, *arr);
+
+} 2 ->90   }
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --91 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+   trace_print("this is a test 5");
+ 
+   TRACE_INFO(MY_TEST_FUNCTION_7, "this is a test 5");
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --92 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+     trace_print("this is a test 6");
+ 
+     TRACE_INFO(MY_TEST_FUNCTION_8, "this is a test 6");
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --93 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+   trace_print( "Replace this fn  %d %d %c ",*p,q, *arr);
+ 
+   TRACE_INFO(MY_TEST_FUNCTION_9,  "Replace this fn  %d %d %c ",*p,q, *arr);
+
+} 1 ->94 }
+
+ } --fn_name_list is Clear--File Name      MaxMsgLen    Total    Repl    Skipped    AddMsgDB    DupMsgDB
+-----------  -----------  -------  ------  ---------  ----------  ----------
+test2.c               18       15      15          0           0           0
+Done!   TRACE_INFO(MY_TEST_FN1_1, "this is a test");
+!   TRACE_INFO(MY_TEST_FN1_2, "this is a test 2");
+!                   TRACE_INFO(MY_TEST_FN2_1, "this is a test fn 2 %d %d \n",*fp,*p);
+!                   TRACE_INFO(MY_TEST_FN2_2, "this is a test fn 2 %d %d \n",*fp,*p);
+!           TRACE_INFO(MY_TEST_FN2_3, "this is a test fn 2 %d %d \n",*fp,*p);
+!                   TRACE_INFO(MY_TEST_FN2_4, "this is a test fn 2 %d %d \n",*fp,*p);
+!   TRACE_INFO(MY_TEST_FUNCTION_1, "this is a test 5");
+!     TRACE_INFO(MY_TEST_FUNCTION_2, "this is a test 6");
+!   TRACE_INFO(MY_TEST_FUNCTION_3,  "Replace this fn  %d %d %c ",*p,q, *arr);
+!        TRACE_INFO(MY_TEST_FUNCTION_4, "this is a test 5");
+!     TRACE_INFO(MY_TEST_FUNCTION_5, "this is a test 6");
+!   TRACE_INFO(MY_TEST_FUNCTION_6,  "Replace this fn  %d %d %c ",*p,q, *arr);
+!   TRACE_INFO(MY_TEST_FUNCTION_7, "this is a test 5");
+!     TRACE_INFO(MY_TEST_FUNCTION_8, "this is a test 6");
+!   TRACE_INFO(MY_TEST_FUNCTION_9,  "Replace this fn  %d %d %c ",*p,q, *arr);
+Diff Util    File Name      Total TP verified    Total TP Failed    Cnt1    Cnt2
+-----------  -----------  -------------------  -----------------  ------  ------
+Diff         test2.c                       15                  0       0       0
+Git-diff     test2.c                       15                  0       0       0
+File test2.c is Closed:
+File  test3.cpp is opened:
+Scanning for Message NAME in file test3.cpp...
+(void my_test_fn1
+(*fp)(int)) void
+1:-2-my_test_fn1
+{ 1 ->2 {
+
+(0) my_test_fn1
+Line:(4), fn = my_test_fn1
+-############################################################################
+-###################      ###################
+Function: --   my_test_fn1()  --  4  --    trace_print("this is a test");
+
+-############################################################################
+Function- -- my_test_fn1()  --  4  --  
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --4 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+   trace_print("this is a test");
+ 
+   TRACE_INFO(MY_TEST_FN1_1, "this is a test");
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --6 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+   trace_print("this is a test 2");
+ 
+   TRACE_INFO(MY_TEST_FN1_2, "this is a test 2");
+
+} 1 ->8 }
+
+ } --fn_name_list is Clear--
+trace_print("this 
+10:-4-trace_print
+trace_print("this 
+11:-4-trace_print
+defined(TRACE_ON_1) #if
+!defined(TRACE_ON_2) &&
+!defined(TRACE_ON_3) &&
+12:-4-!defined
+my_test_fn2(void void
+14:-4-my_test_fn2
+{ 1 ->14 void my_test_fn2(void * p, void *fp) {
+
+{ 2 ->16   {
+
+{ 3 ->18       {
+
+{ 4 ->20         {
+
+{ 5 ->22           {
+
+{ 6 ->24               {
+
+{ 7 ->26                 {
+
+(0) trace_print
+(1) trace_print
+(3) my_test_fn2
+-############################################################################
+-###################      ###################
+Function: --   my_test_fn2()  --  27  --                    trace_print("this is a test fn 2 %d %d \n",*fp,*p);
+
+-############################################################################
+Function- -- my_test_fn2()  --  27  --  
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --27 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+                   trace_print("this is a test fn 2 %d %d \n",*fp,*p);
+ 
+                   TRACE_INFO(MY_TEST_FN2_1, "this is a test fn 2 %d %d \n",*fp,*p);
+
+} 7 ->28                 }
+
+} 6 ->29               }
+
+} 5 ->30           }
+
+} 4 ->31         }
+
+} 3 ->32       }
+
+} 2 ->33   }
+
+{ 2 ->35   {
+
+{ 3 ->37       {
+
+{ 4 ->39         {
+
+{ 5 ->41           {
+
+{ 6 ->43               {
+
+{ 7 ->45                 {
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --46 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+                   trace_print("this is a test fn 2 %d %d \n",*fp,*p);
+ 
+                   TRACE_INFO(MY_TEST_FN2_2, "this is a test fn 2 %d %d \n",*fp,*p);
+
+} 7 ->47                 }
+
+} 6 ->48               }
+
+} 5 ->49           }
+
+} 4 ->50         }
+
+} 3 ->51       }
+
+} 2 ->52   }
+
+{ 2 ->54         {
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --55 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+           trace_print("this is a test fn 2 %d %d \n",*fp,*p);
+ 
+           TRACE_INFO(MY_TEST_FN2_3, "this is a test fn 2 %d %d \n",*fp,*p);
+
+} 2 ->56         }
+
+{ 2 ->58   {
+
+{ 3 ->60       {
+
+{ 4 ->62         {
+
+{ 5 ->64           {
+
+{ 6 ->66               {
+
+{ 7 ->68                 {
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --69 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+                   trace_print("this is a test fn 2 %d %d \n",*fp,*p);
+ 
+                   TRACE_INFO(MY_TEST_FN2_4, "this is a test fn 2 %d %d \n",*fp,*p);
+
+} 7 ->70                 }
+
+} 6 ->71               }
+
+} 5 ->72           }
+
+} 4 ->73         }
+
+} 3 ->74       }
+
+} 2 ->75   }
+
+} 1 ->76 }
+
+ } --fn_name_list is Clear--
+trace_print(" 
+78:-4-trace_print
+My_test_function(void* void
+79:-4-My_test_function
+{ 1 ->80 {
+
+(0) trace_print
+(1) My_test_function
+-############################################################################
+-###################      ###################
+Function: --   My_test_function()  --  81  --    trace_print("this is a test 5");
+
+-############################################################################
+Function- -- My_test_function()  --  81  --  
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --81 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+   trace_print("this is a test 5");
+ 
+   TRACE_INFO(MY_TEST_FUNCTION_1, "this is a test 5");
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --82 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+     trace_print("this is a test 6");
+ 
+     TRACE_INFO(MY_TEST_FUNCTION_2, "this is a test 6");
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --83 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+   trace_print( "Replace this fn  %d %d %c ",*p,q, *arr);
+ 
+   TRACE_INFO(MY_TEST_FUNCTION_3,  "Replace this fn  %d %d %c ",*p,q, *arr);
+
+{ 2 ->85   {
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --86 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+        trace_print("this is a test 5");
+ 
+        TRACE_INFO(MY_TEST_FUNCTION_4, "this is a test 5");
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --87 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+     trace_print("this is a test 6");
+ 
+     TRACE_INFO(MY_TEST_FUNCTION_5, "this is a test 6");
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --88 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+   trace_print( "Replace this fn  %d %d %c ",*p,q, *arr);
+ 
+   TRACE_INFO(MY_TEST_FUNCTION_6,  "Replace this fn  %d %d %c ",*p,q, *arr);
+
+} 2 ->90   }
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --91 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+   trace_print("this is a test 5");
+ 
+   TRACE_INFO(MY_TEST_FUNCTION_7, "this is a test 5");
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --92 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+     trace_print("this is a test 6");
+ 
+     TRACE_INFO(MY_TEST_FUNCTION_8, "this is a test 6");
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --93 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+   trace_print( "Replace this fn  %d %d %c ",*p,q, *arr);
+ 
+   TRACE_INFO(MY_TEST_FUNCTION_9,  "Replace this fn  %d %d %c ",*p,q, *arr);
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --94 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+  trace_print("this is a test 5");
+ 
+  TRACE_INFO(MY_TEST_FUNCTION_10, "this is a test 5");
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --95 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+    trace_print("this is a test 6");
+ 
+    TRACE_INFO(MY_TEST_FUNCTION_11, "this is a test 6");
+
+----------------------------------------------------------------------------------------------
+
+  -----     Replaced: --96 with TRACE_INFO   ------  
+
+----------------------------------------------------------------------------------------------
+  trace_print( "Replace this fn  %d %d %c ",*p,q, *arr);
+ 
+  TRACE_INFO(MY_TEST_FUNCTION_12,  "Replace this fn  %d %d %c ",*p,q, *arr);
+
+} 1 ->98 }
+
+ } --fn_name_list is Clear--File Name      MaxMsgLen    Total    Repl    Skipped    AddMsgDB    DupMsgDB
+-----------  -----------  -------  ------  ---------  ----------  ----------
+test3.cpp             19       18      18          0           0           0
+Done!   TRACE_INFO(MY_TEST_FN1_1, "this is a test");
+!   TRACE_INFO(MY_TEST_FN1_2, "this is a test 2");
+!                   TRACE_INFO(MY_TEST_FN2_1, "this is a test fn 2 %d %d \n",*fp,*p);
+!                   TRACE_INFO(MY_TEST_FN2_2, "this is a test fn 2 %d %d \n",*fp,*p);
+!           TRACE_INFO(MY_TEST_FN2_3, "this is a test fn 2 %d %d \n",*fp,*p);
+!                   TRACE_INFO(MY_TEST_FN2_4, "this is a test fn 2 %d %d \n",*fp,*p);
+!   TRACE_INFO(MY_TEST_FUNCTION_1, "this is a test 5");
+!     TRACE_INFO(MY_TEST_FUNCTION_2, "this is a test 6");
+!   TRACE_INFO(MY_TEST_FUNCTION_3,  "Replace this fn  %d %d %c ",*p,q, *arr);
+!        TRACE_INFO(MY_TEST_FUNCTION_4, "this is a test 5");
+!     TRACE_INFO(MY_TEST_FUNCTION_5, "this is a test 6");
+!   TRACE_INFO(MY_TEST_FUNCTION_6,  "Replace this fn  %d %d %c ",*p,q, *arr);
+!   TRACE_INFO(MY_TEST_FUNCTION_7, "this is a test 5");
+!     TRACE_INFO(MY_TEST_FUNCTION_8, "this is a test 6");
+!   TRACE_INFO(MY_TEST_FUNCTION_9,  "Replace this fn  %d %d %c ",*p,q, *arr);
+!  TRACE_INFO(MY_TEST_FUNCTION_10, "this is a test 5");
+!    TRACE_INFO(MY_TEST_FUNCTION_11, "this is a test 6");
+!  TRACE_INFO(MY_TEST_FUNCTION_12,  "Replace this fn  %d %d %c ",*p,q, *arr);
+Diff Util    File Name      Total TP verified    Total TP Failed    Cnt1    Cnt2
+-----------  -----------  -------------------  -----------------  ------  ------
+Diff         test3.cpp                     18                  0       0       0
+Git-diff     test3.cpp                     18                  0       0       0
+File test3.cpp is Closed:
+********************* REPORT **********************************
+File Name      MaxMsgLen    Total  Not Repl    Skipped    AddMsgDB    DupMsgDB    DiffTP    Fail    Cnt1    Cnt2    GDiffTP    Fail    Cnt1    Cnt2
+-----------  -----------  -------  ----------  ---------  ----------  ----------  --------  ------  ------  ------  ---------  ------  ------  ------
+test.c                18        9
+test1.c               18       12
+test2.c               18       15
+test3.cpp             19       18
+Total                 19       54  0           0          0           0           0         0       0       0       0          0       0       0
