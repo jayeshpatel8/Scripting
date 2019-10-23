@@ -1,6 +1,32 @@
 
 ## Lists the functions that matches search string
-
+#### Explaination: 
+     (?=               ### Start of Look forward for -
+         (\b\w{7,}\b)  ### Group 1(function name): Check for word of more than 7 char (function name)
+         \ *           ### Optional space character
+         \(            ###  Check for opening brace of Function
+         [ ^           ###  if one or more non matching character
+             <
+             \
+             /
+             :
+             ;
+             >
+             !
+             {
+             }
+             =
+             &
+             |
+             \"
+             ]+?
+         \)           ###  Check for Closing brace of Function
+         \s*          ### Optional space character
+         {            ### Check for opening/first curly brace of Function
+         [^}]+        ### Check for Closing/last curly brace of Function
+         (ASSERT|LOG_EVENT|printf)  ### Search string inside function
+     )                ### End of Look forward
+     \1               ### if there is a match then print Group 1(function name)
 #### For PCRE: (?= (\b\w{7,}\b)\ *\([^<\/:;>!{}=&|\"]+?\)\s*{[^}]+(ASSERT|LOG_EVENT|printf))\1
 #### For Python: (?= (\b\w{7,}\b)\ *\([^<\/\\:;>!{}=&|\"]+?\)\s*{[^}]+(ASSERT|LOG_EVENT|printf))\1
 #### For example:   
