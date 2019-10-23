@@ -1,0 +1,446 @@
+static void thread_event_func(void *param) {
+
+}
+void Test_cb1(void * str){
+    printf((char *)str);
+}
+/**
+ * \file Thread.c
+ * \brief  thread functions
+ */
+
+/**
+ * @addtogroup Module Name
+ * @{
+ */
+
+#include <string.h>
+#include "Thread.h"
+#include "Internal.h"
+
+/*****************************************************************************/
+/* LOCAL FUNCTIONS                                                           */
+/*****************************************************************************/
+static void thread_event_func(void *param) {
+
+    T_THREAD *thread = (T_THREAD *)param;
+    T_THREAD_EVENT_INDEX thread_event_rd;
+    if (!thread)
+        return;
+
+    /* call the thread start function (if needed) in the thread context */
+    if (thread->thread_start)
+        thread->thread_start();
+
+    thread->state = THREAD_STATE_RUN;
+
+    do
+    {
+        log_event(thread_event_func_START, 0);
+        S32 res = (S32)OsEventWait(
+            &thread->event_id, OS_INFINITE, OS_INFINITE);
+        ASSERT(OS_SUCCESS, res, EVENT_WAIT);
+
+        log_event(thread_event_func_EVENT_RECEIVED, 0);
+
+        thread_event_rd = thread->thread_event_rd;
+        while (thread_event_rd != thread->thread_event_wr && THREAD_STATE_RUN == thread->state)
+        {
+            T_THREAD_EVENT_ENTRY *event_entry = &thread->thread_event[thread_event_rd];
+            thread->thread_event_already_queued[event_entry->event.event] = FALSE;
+            /* Make sure all the memory operations are complete before
+             * accessing the event. */
+            log_event(thread_event_func_TO_BE_PROCESSED, thread_event_rd);
+            os_data_sync_barrier();
+
+            if (!event_entry->processed)
+            {
+                log_event(thread_event_func_START_PROCESSING, thread_event_rd);
+                /* run through all event handlers*/
+                T_THREAD_CB_LIST hdlr = thread->event_handlers;
+                while (hdlr && !event_entry->processed)
+                {
+                    if (*hdlr)
+                    {
+                        event_entry->processed = (*hdlr)(&event_entry->event);
+                        hdlr++;
+                    }
+                    else
+                    {
+                        log_event(thread_event_func_NOT_PROCESSED, event_entry->processed);
+                        break;
+                    }
+                }
+            }
+
+            log_event(thread_event_func_PROCESSED, event_entry->processed);
+            thread_event_rd = (thread_event_rd + 1) % MAX_THREAD_EVENT_ENTRIES;
+            thread->thread_event_rd = thread_event_rd;
+        }
+    } while (THREAD_STATE_RUN == thread->state);
+}
+
+/*****************************************************************************/
+/* EXPORTED FUNCTIONS                                                        */
+/*****************************************************************************/
+T_RESULT Thread_create(T_THREAD *thread)
+{
+    if (!thread || !thread->thread_name || !thread->thread_event_name ||
+           !thread->event_handlers)
+          return RESULT_PARAMETER_ERROR;
+
+    /* create thread event */
+    if (OsEventCreate(&thread->event_id, thread->thread_event_name,
+                         OS_EVENT_AUTO_RESET) != OS_SUCCESS)
+        return RESULT_NO_RESOURCES_AVAILABLE;
+
+    os_spinlock_init(&thread->event_lock);
+
+    thread->thread_event_wr = 0;
+    thread->thread_event_rd = 0;
+
+    /* create thread */
+    thread->state = THREAD_STATE_INIT;
+    if (OsThreadCreate(
+            &thread->event_thread_id, thread->thread_name,
+            thread_event_func, thread) != OS_SUCCESS)
+        return RESULT_NO_RESOURCES_AVAILABLE;
+
+    /* start thread */
+    if (OsThreadStart(&thread->event_thread_id) != OS_SUCCESS)
+        return RESULT_FAILURE;
+
+    return RESULT_OK;
+}
+
+T_RESULT Thread_close(T_THREAD *thread)
+{
+    return RESULT_NOT_SUPPORTED;
+}
+/**
+ *  if option = THREAD_EVENT_SEND_OPTION_OR case ,it will only post
+ *  this event_type if it's' not present in Thread event Queue.
+ */
+T_RESULT Thread_send_event_ex(T_THREAD *thread,
+                                            T_THREAD_EVENT_TYPE event, void *data,
+                                            U32 size, T_THREAD_EVENT_SEND_OPTION option)
+{
+    T_THREAD_EVENT_ENTRY *event_entry;
+    T_THREAD_EVENT_INDEX thread_event_rd;
+
+    if (!thread)
+        return RESULT_PARAMETER_ERROR;
+
+    if (thread->state != THREAD_STATE_RUN)
+        return RESULT_NOT_HANDLED;
+
+    os_spinlock_obtain(&thread->event_lock);
+
+    if(THREAD_EVENT_SEND_OPTION_OR == option)
+    {
+        if(TRUE == thread->thread_event_already_queued[event])
+        {
+            os_spinlock_release(&thread->event_lock);
+            return RESULT_OK;
+        }
+        else
+        {
+            thread->thread_event_already_queued[event] = TRUE;
+        }
+    }
+    event_entry = &thread->thread_event[thread->thread_event_wr];
+    event_entry->processed = FALSE;
+    event_entry->event.event = event;
+
+    if (data)
+    {
+        if (size > sizeof(event_entry->event.parameters))
+        {
+            os_spinlock_release(&thread->event_lock);
+            return RESULT_PARAMETER_ERROR;
+        }
+        memcpy_s(&event_entry->event.parameters, size, data, size);
+    }
+
+    /*
+     * Make sure the info makes it to main memory.  Make sure to do this BEFORE
+     * the thread_event_wr index is updated.
+     */
+    os_data_sync_barrier();
+
+    /*
+     * Get read index before updating write index in case
+     * read thread processes event and updates rd index
+     * before reaching overflow check
+     */
+    thread_event_rd = thread->thread_event_rd;
+    thread->thread_event_wr = (thread->thread_event_wr + 1) % MAX_THREAD_EVENT_ENTRIES;
+
+    /* Check for overflow */
+    if (thread->thread_event_wr == thread_event_rd)
+    {
+        FATAL(RESULT_FAILURE, THREAD_EVENT_QUEUE_OVERRUN);
+    }
+
+    os_spinlock_release(&thread->event_lock);
+
+    S32 res = (S32)OsEventSet(&thread->event_id);
+    ASSERT(OS_SUCCESS, res, THREAD_EVENT_NOT_SET);
+
+    return RESULT_OK;
+}
+#include <string.h>
+#include <Internal.h>
+#include <Thread.h>
+#include <Scheduler.h>
+#include <Drv.h>
+#include <Isr.h>
+#include <Main.h>
+/*****************************************************************************/
+/* GLOBAL DATA                                                               */
+/*****************************************************************************/
+
+/*****************************************************************************/
+/* LOCAL DATA                                                                */
+/*****************************************************************************/
+static BOOL main_event_hdlr(T_THREAD_EVENT * event);
+static void thread_init(void);
+
+static T_THREAD_CB thread_main_handlers[] = { main_event_hdlr,
+                                              Scheduler_event_hdlr,
+                                              NULL };
+
+static FAST_MEM_DATA_SECTION T_THREAD main_thread_ = {
+      .thread_name = "MAIN_THREAD",
+      .thread_event_name = "MAIN_E",
+      .event_handlers = thread_main_handlers,
+      .thread_start = thread_init,
+};
+
+static T_THREAD *main_thread = &main_thread_;
+
+DECLARE_SCHEDULER(main_scheduler, MAX_SCHEDULER_QUEUE_ENTRIES);
+/*****************************************************************************/
+/* LOCAL FUNCTIONS                                                           */
+/*****************************************************************************/
+
+#define TEST
+#ifdef TEST
+
+void Main_init(void);
+void Main_reqSetMode(const t_base_cfg * P_MODE ,void (*cb)(void*),void * p_cb_data);
+void Main_getState( void (*cb)(U32 State));
+
+void Test_cb1(void * str){
+    printf((char *)str);
+}
+void Test_cb2(U32 State){
+    printf(" Get State : %d \n",State);
+}
+T_RESULT Test_cb3(void * str){
+    printf ((char *)str);
+}
+int main()
+{
+    Main_init();
+    printf("Init Done \n");
+
+    /* Main Thread Test */
+    t_base_cfg cfg={.mode=ON};
+
+    Main_reqSetMode(&cfg,Test_cb1,(void *)"Drv Set Mode : ON \n");
+    Main_getState(Test_cb2);
+
+    cfg.mode=OFF;
+    Main_reqSetMode(&cfg,Test_cb1,(void *)"Drv Set Mode : OFF \n");
+    Main_getState(Test_cb2);
+
+    /* Scheduler Test */
+    Scheduler_run(main_scheduler,Test_cb3,(void *)"Scheduler_run 1\n");
+    Scheduler_grant(main_scheduler,SCHEDULER_GRANT_1);
+    Scheduler_run(main_scheduler,Test_cb3,(void *)"Scheduler_run 2\n");
+    Scheduler_grant(main_scheduler,SCHEDULER_GRANT_1);
+    Scheduler_run_async(main_scheduler,Test_cb3,(void *)"Scheduler_run_async 2\n");
+
+    /* Grant is zero - Run shall not through */
+    Scheduler_run(main_scheduler,Test_cb3,(void *)"Scheduler_run 3\n");
+    Scheduler_run_async(main_scheduler,Test_cb3,(void *)"Scheduler_run_async 3\n");
+
+    /* Scheduler Suspended case */
+    Scheduler_suspend(main_scheduler);
+    Scheduler_run(main_scheduler,Test_cb3,(void *)"Scheduler_run 4\n");
+    Scheduler_run_async(main_scheduler,Test_cb3,(void *)"Scheduler_run_async 4\n");
+    Scheduler_grant(main_scheduler,SCHEDULER_GRANT_1);
+
+    printf("All Test Completed - Exiting! \n");
+}
+#endif
+
+/* This non-blocking-function posts HW CONF message to Thread.
+ * and calls the call back once HW configuration is done */
+static inline void Main_reqSetConfig(T_CFG cfg_type,
+                                            const void * P_CFG,
+                                            void (*cb)(void*),
+                                            void * p_cb_data)
+{
+    T_EVENT_CFG event;
+    event.cfg_type = cfg_type;
+    event.cfg.P_CFG = P_CFG;
+    event.completion_callback =cb;
+    event.p_completion_callback_data =p_cb_data;
+    /* thread_send_event_ex traps on fatal errors */
+    Thread_send_event_ex(main_thread,
+                                   THREAD_EVENT_SET_CFG, &event,
+                                   sizeof(T_EVENT_CFG)
+                                   ,THREAD_EVENT_SEND_OPTION_DO_NOT_OR);
+}
+static void Main_on_set_mode(T_EVENT_CFG set_mode )
+{
+    U32 new_mode = set_mode.cfg.P_MODE->mode;
+    U32 old_mode = Drv_isActive();
+
+    if (old_mode == new_mode)
+        return;
+
+    //mask all interrupts
+    Isr_unmaskIrqs(false);
+
+    LOG_EVENT(LOG_ON_SET_MODE,new_mode);
+
+    if (!new_mode)
+    {
+        /*  Power OFF */
+        Scheduler_suspend(main_scheduler);
+    }
+
+    // just forward the config to  DRV
+    Drv_setMode(set_mode.cfg.P_MODE);
+
+    if (new_mode)
+    {
+        /*  Power ON from OFF */
+        if (!old_mode)
+            Scheduler_init(main_scheduler, main_thread, SCHEDULER_GRANT_1);
+
+        //unmask all interrupts if  is not OFF
+        Isr_unmaskIrqs(true);
+    }
+
+    /* Call the completion call back */
+    if(set_mode.completion_callback)
+        (set_mode.completion_callback)(set_mode.p_completion_callback_data);
+}
+
+static void Main_on_set_config(const T_EVENT_CFG * P_SET_CFG )
+{
+    LOG_EVENT(MAIN_ON_SET_CONFIG, P_SET_CFG->cfg_type);
+    switch (P_SET_CFG->cfg_type)
+    {
+        case CFG_SET_MODE:
+            Main_on_set_mode(*P_SET_CFG);
+        break;
+
+        default:
+            printf("HW CFG unknown CMD: %u", P_SET_CFG->cfg_type );
+        break;
+    }
+}
+
+void Main_on_get_state(T_GET_STATE_EVENT state_event)
+{
+    U32 state = OFF;
+    switch(Drv_isActive())
+    {
+        case OFF:
+            state = OFF;
+            break;
+        case ON:
+            state = ON;
+            break;
+        default:
+            state = OFF;
+            break;
+    }
+
+    if(state_event.completion_callback)
+        (state_event.completion_callback)(state);
+}
+
+/* Main  thread which handles the events and sends data to CPS
+ */
+static BOOL main_event_hdlr(T_THREAD_EVENT *event)
+{
+    BOOL status = TRUE;
+    if (Drv_isActive())
+    {
+        LOG_EVENT(LOG_MAIN_EVENT_HANDLER_ENTER, event->event);
+        switch (event->event)
+        {
+            case THREAD_EVENT_SET_CFG:
+                Main_on_set_config(&event->parameters.cfg_event);
+            break;
+            case THREAD_GET_STATE:
+                Main_on_get_state(event->parameters.state);
+                break;
+            default:
+                status = FALSE;
+            break;
+        }
+        LOG_EVENT(LOG_MAIN_EVENT_HANDLER_FINISHED, event->event);
+    }
+    else
+    {
+        LOG_EVENT(LOG_MAIN_EVENT_HANDLER_ENTER_IN_OFF, event->event);
+        switch (event->event)
+        {
+            case THREAD_EVENT_SET_CFG:
+                Main_on_set_config(&event->parameters.cfg_event);
+            break;
+            case THREAD_GET_STATE:
+                break;
+            default:
+                status = FALSE;
+            break;
+        }
+    }
+    LOG_EVENT(LOG_MAIN_EVENT_HANDLER_EXIT, status);
+    return status;
+}
+
+static void thread_init(void)
+{
+    Isr_init(main_thread);
+}
+
+
+/*****************************************************************************/
+/* EXPORTED FUNCTIONS                                                        */
+/*****************************************************************************/
+
+/*  init function, called at boot ,
+ */
+void Main_init(void)
+{
+    T_RESULT res;
+
+    res = Thread_create(main_thread);
+    ASSERT(RESULT_OK, res, THREAD_CREATE);
+}
+
+void Main_reqSetMode(const t_base_cfg * P_MODE ,void (*cb)(void*),void * p_cb_data)
+{
+    Main_reqSetConfig(CFG_SET_MODE,P_MODE,cb,p_cb_data);
+}
+
+void Main_getState( void (*cb)(U32 State))
+{
+    T_GET_STATE_EVENT event;
+    event.completion_callback = cb;
+
+    /* thread_send_event_ex traps on fatal errors */
+    Thread_send_event_ex(main_thread,
+                                   THREAD_GET_STATE, &event,
+                                   sizeof(T_GET_STATE_EVENT)
+                                   ,THREAD_EVENT_SEND_OPTION_DO_NOT_OR);
+   printf();
+}
